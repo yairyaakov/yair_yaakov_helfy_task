@@ -165,21 +165,47 @@ body {
   color: #fff;
 }
 
-/* ── Task List ───────────────────────────────────────── */
+/* ── Carousel ────────────────────────────────────────── */
 
-/*
-  task-list-wrapper clips overflow so it can later become a carousel window.
-  task-list is the scrollable/slideable strip of cards.
-*/
-.task-list-wrapper {
+/* The wrapper clips the overflowing track — only the viewport is visible. */
+.carousel-wrapper {
   overflow: hidden;
 }
 
-.task-list {
+/*
+  The track holds `copies` identical copies of the task list.
+  width: max-content lets it grow as wide as all cards combined.
+  The animation moves it left by exactly one copy (100% / copies),
+  at which point it silently resets to 0 — creating a seamless loop.
+*/
+.carousel-track {
   display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 8px;
+  width: max-content;
+  padding-bottom: 12px;
+  animation: carousel-scroll var(--duration, 20s) linear infinite;
+  will-change: transform;
+}
+
+/*
+  Each card owns its 16px trailing gap via margin-right (not flex gap).
+  This makes the spacing at every copy boundary identical to spacing
+  between ordinary adjacent cards, so there is no visible seam.
+*/
+.carousel-track .task-card {
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+  margin-right: 16px;
+}
+
+/* Pause the animation while the user hovers over the carousel. */
+.carousel-wrapper:hover .carousel-track {
+  animation-play-state: paused;
+}
+
+@keyframes carousel-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-100% / var(--copies, 2))); }
 }
 
 /* ── Task Card ───────────────────────────────────────── */
