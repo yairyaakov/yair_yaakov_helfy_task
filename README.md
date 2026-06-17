@@ -73,14 +73,22 @@ Make sure the backend is running before opening the frontend.
 
 Base URL: `http://localhost:4000/api/tasks`
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/tasks` | Get all tasks |
-| POST | `/api/tasks` | Create a new task |
-| PUT | `/api/tasks/:id` | Update a task |
-| DELETE | `/api/tasks/:id` | Delete a task |
-| PATCH | `/api/tasks/:id/toggle` | Toggle completed status |
+The backend includes these task routes:
 
+`GET /api/tasks`  
+Gets all tasks.
+
+`POST /api/tasks`  
+Creates a new task.
+
+`PUT /api/tasks/:id`  
+Updates an existing task.
+
+`DELETE /api/tasks/:id`  
+Deletes a task.
+
+`PATCH /api/tasks/:id/toggle`  
+Changes a task from pending to completed, or from completed back to pending.
 ### Task shape
 
 ```json
