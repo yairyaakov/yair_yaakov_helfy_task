@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const EMPTY_FORM = { title: '', description: '', priority: 'medium' };
+const EMPTY_FORM = { title: '',
+  description: '',
+  priority: 'medium' 
+};
 
 function TaskForm({ editingTask, onSubmit, onCancel }) {
   const [form, setForm] = useState(EMPTY_FORM);
 
-  // Pre-fill when editing, clear when switching back to create mode
   useEffect(() => {
     if (editingTask) {
       setForm({
@@ -19,7 +21,12 @@ function TaskForm({ editingTask, onSubmit, onCancel }) {
   }, [editingTask]);
 
   function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const name = e.target.name;
+    const value = e.target.value;
+    setForm({
+      ...form,
+      [name]:value,
+    });
   }
 
   function handleSubmit(e) {

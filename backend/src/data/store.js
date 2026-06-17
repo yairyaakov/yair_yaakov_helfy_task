@@ -1,17 +1,15 @@
-// In-memory task storage with seed data so the carousel has content on first load
-
 let tasks = [
   {
     id: 1,
     title: 'Buy groceries',
-    description: 'Milk, eggs, bread, and coffee',
-    completed: false,
+    description: 'Milk, eggs, bread,coffee',
+    completed:false,
     createdAt: new Date(),
     priority: 'low',
   },
   {
     id: 2,
-    title: 'Finish project report',
+    title:'Finish project report',
     description: 'Complete the Q2 analysis and send to manager',
     completed: false,
     createdAt: new Date(),
@@ -20,7 +18,7 @@ let tasks = [
   {
     id: 3,
     title: 'Schedule dentist appointment',
-    description: 'Call the clinic and book a slot for next week',
+    description:'Call the clinic and book a slot for next week',
     completed: true,
     createdAt: new Date(),
     priority: 'medium',
@@ -28,7 +26,7 @@ let tasks = [
   {
     id: 4,
     title: 'Read a book',
-    description: 'Continue reading "Clean Code" chapter 4',
+    description: 'Continue reading "Clean Code" book',
     completed: false,
     createdAt: new Date(),
     priority: 'low',
@@ -36,10 +34,10 @@ let tasks = [
   {
     id: 5,
     title: 'Fix login bug',
-    description: 'Users are getting 401 on valid tokens — investigate middleware',
+    description: 'Users are getting 401 on valid tokens - investigate middleware',
     completed: false,
     createdAt: new Date(),
-    priority: 'high',
+    priority:'high',
   },
 ];
 
@@ -50,7 +48,7 @@ function getAllTasks() {
 }
 
 function getTaskById(id) {
-  return tasks.find((t) => t.id === id);
+  return tasks.find((task) => task.id === id);
 }
 
 function createTask({ title, description, priority }) {
@@ -62,6 +60,7 @@ function createTask({ title, description, priority }) {
     createdAt: new Date(),
     priority,
   };
+
   tasks.push(task);
   return task;
 }
@@ -74,12 +73,11 @@ function updateTask(id, updates) {
   if (updates.description !== undefined) task.description = updates.description;
   if (updates.priority !== undefined) task.priority = updates.priority;
   if (updates.completed !== undefined) task.completed = updates.completed;
-
   return task;
 }
 
 function deleteTask(id) {
-  const index = tasks.findIndex((t) => t.id === id);
+  const index = tasks.findIndex((task) => task.id === id);
   if (index === -1) return false;
   tasks.splice(index, 1);
   return true;
@@ -92,4 +90,4 @@ function toggleTask(id) {
   return task;
 }
 
-module.exports = { getAllTasks, getTaskById, createTask, updateTask, deleteTask, toggleTask };
+module.exports = { getAllTasks, createTask, updateTask, deleteTask, toggleTask };

@@ -7,13 +7,13 @@ const FILTERS = [
 function TaskFilter({ activeFilter, onFilterChange }) {
   return (
     <div className="task-filter">
-      {FILTERS.map((f) => (
+      {FILTERS.map((filter) => (
         <button
-          key={f.value}
-          className={`filter-btn${activeFilter === f.value ? ' active' : ''}`}
-          onClick={() => onFilterChange(f.value)}
+          key={filter.value}
+          className={`filter-btn${activeFilter === filter.value ? ' active' : ''}`}
+          onClick={() => onFilterChange(filter.value)}
         >
-          {f.label}
+          {filter.label}
         </button>
       ))}
     </div>

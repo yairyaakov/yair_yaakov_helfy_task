@@ -1,55 +1,100 @@
 # Task Manager App
 
-A fullstack Task Manager application built with Express.js and React.
+A small fullstack task manager app built as a home assignment.
 
-## Setup Instructions
+The backend is a simple Express API that stores tasks in memory.
+
+The frontend is a React app that lets you create, edit, delete, and filter tasks.
+
+Tasks are displayed in an endless animated carousel. The carousel was built manually with CSS, without using a carousel library.
+
+---
+
+## Technologies
+
+**Backend**
+- Node.js
+- Express
+- In-memory array (no database)
+
+**Frontend**
+- React (with Vite)
+- Regular CSS (no framework)
+- Fetch API
+
+---
+
+## Features
+
+- View all tasks in an animated endless carousel
+- Add a new task with title, description, and priority
+- Edit an existing task
+- Delete a task (with confirmation)
+- Toggle a task between completed and pending
+- Filter tasks by All / Completed / Pending
+- Priority badge for each task (low, medium, high)
+- Completed tasks are visually faded with strikethrough
+- The carousel pauses when you hover over it
+- Basic responsive layout for mobile
+
+---
+
+## How to Run
+
+You need two terminals — one for the backend and one for the frontend.
 
 ### Backend
 
 ```bash
 cd backend
 npm install
-npm run dev      # development (nodemon)
-# or
-npm start        # production
+npm run dev
 ```
 
-Server runs on **http://localhost:4000**
+The server runs on **http://localhost:4000**
+
+The data is stored in memory, so it resets every time the server restarts. Five example tasks are loaded automatically on startup.
 
 ### Frontend
 
-_(Coming soon)_
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The app runs on **http://localhost:5173**
+
+Make sure the backend is running before opening the frontend.
 
 ---
 
-## API Documentation
+## API Endpoints
 
-Base URL: `http://localhost:4000/api`
+Base URL: `http://localhost:4000/api/tasks`
 
-### Task Model
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/tasks` | Get all tasks |
+| POST | `/api/tasks` | Create a new task |
+| PUT | `/api/tasks/:id` | Update a task |
+| DELETE | `/api/tasks/:id` | Delete a task |
+| PATCH | `/api/tasks/:id/toggle` | Toggle completed status |
+
+### Task shape
 
 ```json
 {
   "id": 1,
-  "title": "string",
-  "description": "string",
+  "title": "Buy groceries",
+  "description": "Milk, eggs, bread",
   "completed": false,
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "priority": "low | medium | high"
+  "createdAt": "createdAt": "2026-01-01T00:00:00.000Z",
+  "priority": "low"
 }
 ```
 
-### Endpoints
-
-| Method | Path | Description | Success |
-|--------|------|-------------|---------|
-| GET | `/api/tasks` | Get all tasks | 200 |
-| POST | `/api/tasks` | Create a task | 201 |
-| PUT | `/api/tasks/:id` | Update a task | 200 |
-| DELETE | `/api/tasks/:id` | Delete a task | 204 |
-| PATCH | `/api/tasks/:id/toggle` | Toggle completed | 200 |
-
-### POST / PUT Request Body
+### POST / PUT body
 
 ```json
 {
@@ -59,21 +104,16 @@ Base URL: `http://localhost:4000/api`
 }
 ```
 
-### Error Response
+`priority` must be one of: `low`, `medium`, `high`
 
-```json
-{ "error": "Meaningful error message" }
-```
+All fields are required. The server returns `400` if any field is missing or empty.
 
 ---
 
-## Assumptions
+## Notes
 
-- Data is stored in-memory and resets on server restart
-- No authentication required
-- IDs are auto-incremented integers starting from 1
-- 5 seed tasks are pre-loaded on startup for demo purposes
-
-## Time Spent
-
-_(Fill in after completion)_
+- Tasks are stored in memory. Restarting the backend clears all data.
+- There is no authentication.
+- The carousel is implemented manually using CSS `@keyframes` and a duplicated task array. No external library is used.
+- The frontend calls the backend at `http://localhost:4000` directly. Both servers need to be running at the same time.
+- IDs are auto-incremented integers starting from 1.

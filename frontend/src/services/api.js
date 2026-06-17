@@ -1,8 +1,16 @@
 const BASE_URL = 'http://localhost:4000/api/tasks';
 
+async function handleError(res, message) {
+  const body = await res.json();
+  throw new Error(body.error || message);
+}
+
 export async function getTasks() {
   const res = await fetch(BASE_URL);
-  if (!res.ok) throw new Error('Failed to fetch tasks');
+  if (!res.ok) {
+    throw new Error('Failed to fetch tasks');
+  }
+
   return res.json();
 }
 
@@ -12,9 +20,9 @@ export async function createTask(taskData) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(taskData),
   });
+
   if (!res.ok) {
-    const body = await res.json();
-    throw new Error(body.error || 'Failed to create task');
+    await handleError(res, 'Failed to create task');
   }
   return res.json();
 }
@@ -25,27 +33,30 @@ export async function updateTask(id, taskData) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(taskData),
   });
+
   if (!res.ok) {
-    const body = await res.json();
-    throw new Error(body.error || 'Failed to update task');
+    await handleError(res, 'Failed to update task');
   }
+
   return res.json();
 }
 
 export async function deleteTask(id) {
-  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: 'DELETE',
+  });
   if (!res.ok) {
-    const body = await res.json();
-    throw new Error(body.error || 'Failed to delete task');
+    await handleError(res, 'Failed to delete task');
   }
-  // 204 No Content — nothing to parse
 }
 
 export async function toggleTask(id) {
-  const res = await fetch(`${BASE_URL}/${id}/toggle`, { method: 'PATCH' });
+  const res = await fetch(`${BASE_URL}/${id}/toggle`, {
+    method: 'PATCH',
+  });
+
   if (!res.ok) {
-    const body = await res.json();
-    throw new Error(body.error || 'Failed to toggle task');
+    await handleError(res, 'Failed to toggle task');
   }
   return res.json();
 }

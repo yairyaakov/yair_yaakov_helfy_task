@@ -1,5 +1,11 @@
-import { useState, useEffect } from 'react';
-import { getTasks, createTask, updateTask, deleteTask, toggleTask } from './services/api';
+import { useEffect, useState } from 'react';
+import {
+  getTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+  toggleTask,
+} from './services/api';
 import TaskForm from './components/TaskForm';
 import TaskFilter from './components/TaskFilter';
 import TaskList from './components/TaskList';
@@ -9,7 +15,7 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [editingTask, setEditingTask] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     loadTasks();
@@ -18,9 +24,9 @@ function App() {
   async function loadTasks() {
     try {
       setLoading(true);
-      setError(null);
-      const data = await getTasks();
-      setTasks(data);
+      setError('');
+      const tasksFromServer = await getTasks();
+      setTasks(tasksFromServer);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -28,55 +34,99 @@ function App() {
     }
   }
 
-  async function handleCreate(formData) {
+  async function handleCreateTask(formData) {
     try {
-      setError(null);
+      setError('');
       const newTask = await createTask(formData);
-      setTasks((prev) => [...prev, newTask]);
+      setTasks([...tasks, newTask]);
     } catch (err) {
       setError(err.message);
     }
   }
 
-  async function handleUpdate(id, formData) {
+  async function handleUpdateTask(formData) {
+    if (!editingTask) {
+      return;
+    }
+
     try {
-      setError(null);
-      // Preserve the existing completed status — the form does not expose it
-      const existing = tasks.find((t) => t.id === id);
-      const updated = await updateTask(id, { ...formData, completed: existing.completed });
-      setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      setError('');
+
+      const updatedTask = await updateTask(editingTask.id, {
+        ...formData,
+        completed: editingTask.completed,
+      });
+
+      const updatedTasks = tasks.map((task) => {
+        if (task.id === editingTask.id) {
+          return updatedTask;
+        }
+        return task;
+      });
+
+      setTasks(updatedTasks);
       setEditingTask(null);
     } catch (err) {
       setError(err.message);
     }
   }
 
-  async function handleDelete(id) {
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
+  async function handleDeleteTask(id) {
+    const confirmed = window.confirm('Are you sure you want to delete this task?');
+
+    if (!confirmed) {
+      return;
+    }
     try {
-      setError(null);
+      setError('');
+
       await deleteTask(id);
-      setTasks((prev) => prev.filter((t) => t.id !== id));
+
+      const remainingTasks = tasks.filter((task) => task.id !== id);
+      setTasks(remainingTasks);
     } catch (err) {
       setError(err.message);
     }
   }
 
-  async function handleToggle(id) {
+  async function handleToggleTask(id) {
     try {
-      setError(null);
-      const updated = await toggleTask(id);
-      setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      setError('');
+      const updatedTask = await toggleTask(id);
+
+      const updatedTasks = tasks.map((task) => {
+        if (task.id === id) {
+          return updatedTask;
+        }
+        return task;
+      });
+
+      setTasks(updatedTasks);
     } catch (err) {
       setError(err.message);
     }
   }
 
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === 'completed') return task.completed;
-    if (filter === 'pending') return !task.completed;
-    return true;
-  });
+  function getFilteredTasks() {
+    if (filter === 'completed') {
+      return tasks.filter((task) => task.completed);
+    }
+
+    if (filter === 'pending') {
+      return tasks.filter((task) => !task.completed);
+    }
+    return tasks;
+  }
+
+  function handleFormSubmit(formData) {
+    if (editingTask) {
+      handleUpdateTask(formData);
+    } else {
+      handleCreateTask(formData);
+    }
+  }
+
+  const filteredTasks = getFilteredTasks();
 
   return (
     <div className="app">
@@ -87,18 +137,21 @@ function App() {
       <main className="app-main">
         <TaskForm
           editingTask={editingTask}
-          onSubmit={editingTask ? (data) => handleUpdate(editingTask.id, data) : handleCreate}
+          onSubmit={handleFormSubmit}
           onCancel={() => setEditingTask(null)}
         />
 
         {error && (
           <div className="error-banner">
             <span>{error}</span>
-            <button onClick={() => setError(null)}>✕</button>
+            <button onClick={() => setError('')}>x</button>
           </div>
         )}
 
-        <TaskFilter activeFilter={filter} onFilterChange={setFilter} />
+        <TaskFilter
+          activeFilter={filter}
+          onFilterChange={setFilter}
+        />
 
         {loading ? (
           <div className="loading">Loading tasks...</div>
@@ -106,8 +159,8 @@ function App() {
           <TaskList
             tasks={filteredTasks}
             onEdit={setEditingTask}
-            onDelete={handleDelete}
-            onToggle={handleToggle}
+            onDelete={handleDeleteTask}
+            onToggle={handleToggleTask}
           />
         )}
       </main>
